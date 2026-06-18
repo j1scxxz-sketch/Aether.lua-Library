@@ -69,35 +69,6 @@
     local Mouse = LocalPlayer:GetMouse()
 --
 
-do
-    local FolderLocation = "ui font"
-    local HttpService = game:GetService("HttpService")
-    if not isfolder(FolderLocation) then makefolder(FolderLocation) end
-    if not isfolder(FolderLocation.."\\Fonts") then makefolder(FolderLocation.."\\Fonts") end
-    if not isfile(FolderLocation.."\\Fonts\\Tahoma.ttf") then
-        writefile(FolderLocation.."\\Fonts\\Tahoma.ttf", game:HttpGet("https://github.com/LuckyHub1/LuckyHub/raw/main/zekton_rg.ttf"))
-    end
-    if not isfile(FolderLocation.."\\Fonts\\Tahoma.font") then
-        local Config = {
-            name = "Tahoma",
-            faces = {{
-                name    = "Regular",
-                weight  = 400,
-                style   = "normal",
-                assetId = getcustomasset(FolderLocation.."\\Fonts\\Tahoma.ttf")
-            }}
-        }
-        writefile(FolderLocation.."\\Fonts\\Tahoma.font", HttpService:JSONEncode(Config))
-    end
-    if not getgenv().Fonts then
-        getgenv().Fonts = { Loaded = {} }
-        getgenv().Fonts.Loaded["Tahoma"] = Font.new(
-            getcustomasset(FolderLocation.."\\Fonts\\Tahoma.font"),
-            Enum.FontWeight.Regular
-        )
-    end
-end
-
 if getgenv().Library and getgenv().Library.Unload then
     getgenv().Library:Unload()
 end
@@ -1231,7 +1202,7 @@ getgenv().Library = {
         end
 
         if Class == "TextLabel" or Class == "TextBox" then
-Instance.FontFace = (getgenv().Fonts and getgenv().Fonts.Loaded["Tahoma"]) or Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+Instance.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
 Instance.TextSize = 16
         end
 
@@ -1649,10 +1620,11 @@ Instance.TextSize = 16
             Cfg.Size = Vector2.new(AbsoluteSize.X, AbsoluteSize.Y)
         end)
 
-        Items.Watermark = Library:Create("CanvasGroup",{Parent = Library.HUD.Instance; Position = UDim2.new(0, 30, 0, 200); BorderSizePixel = 0; AutomaticSize = Enum.AutomaticSize.XY; BackgroundColor3 = Color3.fromRGB(12, 12, 14)}):Draggify()
-        Items.Title = Library:Create("TextLabel",{LayoutOrder = 1; TextColor3 = Color3.fromRGB(245, 245, 245); Text = Cfg.Text; Parent = Items.Watermark.Instance; BackgroundTransparency = 1; BorderSizePixel = 0; AutomaticSize = Enum.AutomaticSize.XY; BackgroundColor3 = Color3.fromRGB(255, 255, 255)})
-        Items.UIPadding = Library:Create("UIPadding",{PaddingTop = UDim.new(0, 5); PaddingBottom = UDim.new(0, 7); Parent = Items.Title.Instance; PaddingRight = UDim.new(0, 8); PaddingLeft = UDim.new(0, 8)})
-        Items.UIPadding = Library:Create("UIPadding",{PaddingTop = UDim.new(0, 2); PaddingBottom = UDim.new(0, 2); Parent = Items.Watermark.Instance; PaddingRight = UDim.new(0, 2); PaddingLeft = UDim.new(0, 2)})
+Items.Watermark = Library:Create("CanvasGroup",{Parent = Library.HUD.Instance; Position = UDim2.new(0, 30, 0, 200); BorderSizePixel = 0; AutomaticSize = Enum.AutomaticSize.XY; BackgroundColor3 = Color3.fromRGB(12, 12, 14)}):Draggify()
+        Library:Create("UIListLayout",{FillDirection = Enum.FillDirection.Horizontal; VerticalAlignment = Enum.VerticalAlignment.Center; Padding = UDim.new(0, 5); SortOrder = Enum.SortOrder.LayoutOrder; Parent = Items.Watermark.Instance})
+        Library:Create("UIPadding",{PaddingTop = UDim.new(0, 6); PaddingBottom = UDim.new(0, 6); PaddingLeft = UDim.new(0, 8); PaddingRight = UDim.new(0, 8); Parent = Items.Watermark.Instance})
+        Items.WatermarkIcon = Library:Create("ImageLabel",{ImageColor3 = Themes.Preset.Accent; LayoutOrder = 1; Parent = Items.Watermark.Instance; Size = UDim2.new(0, 16, 0, 16); Image = Cfg.Image; BackgroundTransparency = 1; BorderSizePixel = 0}):Themify("Accent","ImageColor3")
+        Items.Title = Library:Create("TextLabel",{LayoutOrder = 2; TextColor3 = Color3.fromRGB(245, 245, 245); Text = Services.Players.LocalPlayer.Name; Parent = Items.Watermark.Instance; BackgroundTransparency = 1; BorderSizePixel = 0; AutomaticSize = Enum.AutomaticSize.XY})
         Items.UICorner = Library:Create("UICorner",{Parent = Items.Watermark.Instance})
 
 
@@ -1672,7 +1644,7 @@ Instance.TextSize = 16
                 LastTick = Tick
             end
 
-            Items.Title.Instance.Text = string.format("%s | FPS: %s | %s", Cfg.Title, tostring(FPS), os.date("%H:%M:%S"))
+            Items.Title.Instance.Text = string.format("%s | FPS: %s | %s", Services.Players.LocalPlayer.Name, tostring(FPS), os.date("%H:%M:%S"))
         end)
 
         function Cfg.SetVisible(Bool)
@@ -1702,21 +1674,7 @@ Instance.TextSize = 16
             end
         end
 
-        if Cfg.IsMobile then
-            task.delay(Library.TweeningSpeed, function()
-                Items.Menu:TweenDescendants(true, Cfg)
-            end)
 
-            Items.Logo:OnClick(function()
-                if Cfg.Tweening then
-                    return
-                end
-
-                Cfg.Visible = not Cfg.Visible
-
-                Cfg.SetVisible(Cfg.Visible)
-            end)
-        end
 
         Library.Window = setmetatable(Cfg, Library)
 
@@ -2475,7 +2433,7 @@ Instance.TextSize = 16
                 ZIndex = 2
             })
 
-            Items.Value = Library:Create( "TextLabel", {
+Items.Value = Library:Create( "TextBox", {
                 FontFace = Themes.Preset.Font;
                 TextColor3 = Color3.fromRGB(252, 252, 252);
                 Text = "50%";
@@ -2485,7 +2443,9 @@ Instance.TextSize = 16
                 BackgroundTransparency = 1;
                 Position = UDim2.new(1, 0, 0, 0);
                 BorderSizePixel = 0;
-                ZIndex = 2
+                ZIndex = 2;
+                ClearTextOnFocus = false;
+                TextEditable = true;
             })
 
             Items.Accent = Library:Create( "Frame", {
@@ -2566,8 +2526,18 @@ Instance.TextSize = 16
             Cfg.Set(Value)
         end
 
-        Cfg.Set(Cfg.Value);
+Cfg.Set(Cfg.Value);
         Items.SliderDragger:OnDrag(Cfg.UpdateSlider)
+
+        Items.Value.Instance.FocusLost:Connect(function()
+            local Num = tonumber(Items.Value.Instance.Text:match("%-?%d+%.?%d*"))
+            if Num then
+                Cfg.Set(Num)
+            else
+                Items.Value.Instance.Text = tostring(Cfg.Value) .. Cfg.Suffix
+            end
+        end)
+
         self.UpdateSection(Items.Object.Instance)
 
         ConfigFlags[Cfg.Flag] = Cfg.Set
@@ -2956,9 +2926,13 @@ Instance.TextSize = 16
                     end
                 end})
 
-                Items.Section = Section.Items.Section
+Items.Section = Section.Items.Section
                 Items.Section.Instance.Parent = Library.Items.Instance
                 Items.Section.Instance.Visible = false
+                Library:Create("UIScale", {
+                    Parent = Items.Section.Instance;
+                    Scale = 0.9
+                })
 
                 Items.Section:Reparent(Library.Elements.Instance)
             end
