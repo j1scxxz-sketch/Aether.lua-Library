@@ -1231,8 +1231,8 @@ getgenv().Library = {
         end
 
         if Class == "TextLabel" or Class == "TextBox" then
-            Instance.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
-            Instance.TextSize = 16
+Instance.FontFace = (getgenv().Fonts and getgenv().Fonts.Loaded["Tahoma"]) or Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+Instance.TextSize = 16
         end
 
         Instance.Name = "\0"
@@ -1410,7 +1410,7 @@ getgenv().Library = {
 
             Library:Create( "UIScale", {
                 Parent = Items.Menu.Instance;
-                Scale = 0.65
+                Scale = 0.9
             })
 
             Items.Menu.Instance.Position = UDim2.fromOffset(Items.Menu.Instance.AbsolutePosition.X, Items.Menu.Instance.AbsolutePosition.Y)
