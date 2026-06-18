@@ -69,6 +69,35 @@
     local Mouse = LocalPlayer:GetMouse()
 --
 
+do
+    local FolderLocation = "ui font"
+    local HttpService = game:GetService("HttpService")
+    if not isfolder(FolderLocation) then makefolder(FolderLocation) end
+    if not isfolder(FolderLocation.."\\Fonts") then makefolder(FolderLocation.."\\Fonts") end
+    if not isfile(FolderLocation.."\\Fonts\\Tahoma.ttf") then
+        writefile(FolderLocation.."\\Fonts\\Tahoma.ttf", game:HttpGet("https://github.com/LuckyHub1/LuckyHub/raw/main/zekton_rg.ttf"))
+    end
+    if not isfile(FolderLocation.."\\Fonts\\Tahoma.font") then
+        local Config = {
+            name = "Tahoma",
+            faces = {{
+                name    = "Regular",
+                weight  = 400,
+                style   = "normal",
+                assetId = getcustomasset(FolderLocation.."\\Fonts\\Tahoma.ttf")
+            }}
+        }
+        writefile(FolderLocation.."\\Fonts\\Tahoma.font", HttpService:JSONEncode(Config))
+    end
+    if not getgenv().Fonts then
+        getgenv().Fonts = { Loaded = {} }
+        getgenv().Fonts.Loaded["Tahoma"] = Font.new(
+            getcustomasset(FolderLocation.."\\Fonts\\Tahoma.font"),
+            Enum.FontWeight.Regular
+        )
+    end
+end
+
 if getgenv().Library and getgenv().Library.Unload then
     getgenv().Library:Unload()
 end
@@ -126,7 +155,7 @@ getgenv().Library = {
             ["Unselected"] = Color3.fromRGB(170, 170, 170),
             ["TextColor"] = Color3.fromRGB(255, 255, 255),
             ["Background"] = Color3.fromRGB(12, 12, 14),
-            ["Font"] = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+            ["Font"] = getgenv().Fonts.Loaded["Tahoma"]
         };
         Utility = {};
     }; do
@@ -1203,7 +1232,7 @@ getgenv().Library = {
 
         if Class == "TextLabel" or Class == "TextBox" then
             Instance.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
-            Instance.TextSize = 15
+            Instance.TextSize = 16
         end
 
         Instance.Name = "\0"
