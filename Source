@@ -1676,6 +1676,10 @@ Items.Watermark = Library:Create("CanvasGroup",{Parent = Library.HUD.Instance; P
 
 
 
+task.delay(Library.TweeningSpeed, function()
+            Items.Menu:TweenDescendants(true, Cfg)
+        end)
+
         Library.Window = setmetatable(Cfg, Library)
 
         return Library.Window
